@@ -1,19 +1,19 @@
 #!/bin/bash
 
-if [ $# -ne 1 ] ; then 
+if [ $# -ne 1 ] ; then
 	echo 'Error: geolocate takes only one argument - an ip address or url.'
 else
 	CURL="/usr/bin/curl"
-	RVMHTTP="freegeoip.net/csv/$1"
+	RVMHTTP="http://ip-api.com/csv/$1?fields=country,regionName,city,lat,lon,query"
 	CURLARGS="-s"
 
 	# you can store the result in a variable
 	response="$($CURL $CURLARGS $RVMHTTP)"
 
 	if [ ${#response} -eq 0 ] ; then
-		echo "Error: Not able to connect to freegeoip.net"
+		echo "Error: Not able to connect to ip-api.com"
 	elif [ "$response" == "404 page not found" ] ; then
-		echo "Error: Invalid argument - '$1' not found on freegeoip.net"
+		echo "Error: Invalid argument - '$1' not found on ip-api.com"
 	else
 		IFS=',' read -ra VALS <<< "$response"
 
@@ -28,8 +28,8 @@ else
 			fi
 		done
 
-		echo "IP Address: ${VALS[0]}"
-		echo "Location Name: ${VALS[5]}, ${VALS[3]}, ${VALS[2]}"
-		echo "Lat, Long: (${VALS[8]}, ${VALS[9]})"
+		echo "IP Address: ${VALS[5]}"
+		echo "Location Name: ${VALS[2]}, ${VALS[1]}, ${VALS[0]}"
+		echo "Lat, Long: http://www.google.com/maps/search/?api=1&query=${VALS[3]},${VALS[4]}"
 	fi
 fi
